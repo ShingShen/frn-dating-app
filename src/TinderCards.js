@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
+import database from './firebase';
 import './TinderCards.css';
 
 function TinderCards() {
-    const [people, setPeople] = useState([
-        {
-            name: "Peter Johnson",
-            url:
-            "http://www.gstatic.com/tv/thumb/persons/589228/589228_v9_ba.jpg",
-        },
+    const [people, setPeople] = useState([]);
 
-        {
-            name: "Mary Johnson",
-            url:
-            "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=425,format=auto/sites/default/files/styles/768x768/public/images/methode/2018/07/26/bf01d32e-8fcd-11e8-ad1d-4615aa6bc452_1280x720_204951.jpg?itok=lSmaQVob",
-        },
-    ]);
+    // Piece if code whitch based on a condition
+    useEffect(() => {
+        // this is where the code runs...
+        database.collection('people').onSnapshot(snapshot => (
+            setPeople(snapshot.docs.map(doc => doc.data()))
+        ))
+        // this will run ONCE when the component loads, and never again
+    }, []);
+
+    // BAD
+    // const people = [];
+    // people.push('Peter', 'Tom')
+
+    // GOOD (Push to an array in React)
+    // setPeople([...people, 'Peter', 'Tom'])
 
     const swiped = (direction, nameToDelete) => {
         console.log("removing: " + nameToDelete);
